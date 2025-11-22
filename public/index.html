@@ -1,89 +1,515 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Welcome to Firebase Hosting</title>
-
-    <!-- update the version number as needed -->
-    <script defer src="/__/firebase/12.6.0/firebase-app-compat.js"></script>
-    <!-- include only the Firebase features as you need -->
-    <script defer src="/__/firebase/12.6.0/firebase-auth-compat.js"></script>
-    <script defer src="/__/firebase/12.6.0/firebase-database-compat.js"></script>
-    <script defer src="/__/firebase/12.6.0/firebase-firestore-compat.js"></script>
-    <script defer src="/__/firebase/12.6.0/firebase-functions-compat.js"></script>
-    <script defer src="/__/firebase/12.6.0/firebase-messaging-compat.js"></script>
-    <script defer src="/__/firebase/12.6.0/firebase-storage-compat.js"></script>
-    <script defer src="/__/firebase/12.6.0/firebase-analytics-compat.js"></script>
-    <script defer src="/__/firebase/12.6.0/firebase-remote-config-compat.js"></script>
-    <script defer src="/__/firebase/12.6.0/firebase-performance-compat.js"></script>
-    <!-- 
-      initialize the SDK after all desired features are loaded, set useEmulator to false
-      to avoid connecting the SDK to running emulators.
-    -->
-    <script defer src="/__/firebase/init.js?useEmulator=true"></script>
-
-    <style media="screen">
-      body { background: #ECEFF1; color: rgba(0,0,0,0.87); font-family: Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
-      #message { background: white; max-width: 360px; margin: 100px auto 16px; padding: 32px 24px; border-radius: 3px; }
-      #message h2 { color: #ffa100; font-weight: bold; font-size: 16px; margin: 0 0 8px; }
-      #message h1 { font-size: 22px; font-weight: 300; color: rgba(0,0,0,0.6); margin: 0 0 16px;}
-      #message p { line-height: 140%; margin: 16px 0 24px; font-size: 14px; }
-      #message a { display: block; text-align: center; background: #039be5; text-transform: uppercase; text-decoration: none; color: white; padding: 16px; border-radius: 4px; }
-      #message, #message a { box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24); }
-      #load { color: rgba(0,0,0,0.4); text-align: center; font-size: 13px; }
-      @media (max-width: 600px) {
-        body, #message { margin-top: 0; background: white; box-shadow: none; }
-        body { border-top: 16px solid #ffa100; }
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>QRaus – Rent Anything in Perth</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Google Fonts for Modern Look -->
+  <link href="https://fonts.googleapis.com/css?family=Inter:400,600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --background: #23272a;
+      --foreground: #2c2f33;
+      --header-dark: #1a1c1f;
+      --primary-accent: #7289da;
+      --secondary-accent: #99aab5;
+      --highlight: #ffffff;
+      --star: #feca1b;
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', Arial, sans-serif;
+      background: var(--background);
+      color: var(--secondary-accent);
+      min-height: 100vh;
+    }
+    header {
+      background: var(--header-dark);
+      color: var(--highlight);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 2rem;
+      box-shadow: 0 2px 6px #0004;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    header .logo {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary-accent);
+      letter-spacing: 1px;
+      text-shadow: 0 2px 16px #282c34ad;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    header nav {
+      display: flex;
+      gap: 2rem;
+    }
+    header nav a {
+      color: var(--highlight);
+      text-decoration: none;
+      padding: 0.45rem 1rem;
+      border-radius: 6px;
+      font-weight: 500;
+      transition: background 0.18s;
+    }
+    header nav a:hover {
+      background: var(--primary-accent);
+      color: var(--background);
+    }
+    .auth-buttons button {
+      margin-left: 1rem;
+      background: var(--primary-accent);
+      color: #fff;
+      border: none;
+      padding: 0.45rem 1.4rem;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 1px 4px #0003;
+      transition: filter 0.15s;
+    }
+    .auth-buttons button:hover {
+      filter: brightness(1.16);
+    }
+    .auth-buttons .signup {
+      background: #202225;
+      color: var(--primary-accent);
+    }
+    main {
+      max-width: 1300px;
+      margin: 2.5rem auto 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2.5rem;
+      padding: 0 1rem 3rem;
+      min-height: 70vh;
+    }
+    .sidebar {
+      background: var(--foreground);
+      padding: 1.5rem 1.25rem;
+      border-radius: 16px;
+      min-width: 240px;
+      width: 260px;
+      min-height: 380px;
+      box-shadow: 0 4px 18px #0002;
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+      flex-shrink: 0
+    }
+    .sidebar h2 {
+      color: var(--highlight);
+      margin: 0 0 0.5rem;
+      font-size: 1.18rem;
+      letter-spacing: 0.7px;
+    }
+    .sidebar label {
+      font-size: 0.99rem;
+      margin-bottom: 0.45rem;
+    }
+    .sidebar input,
+    .sidebar select {
+      background: #202225;
+      color: var(--highlight);
+      border: 1px solid #333;
+      border-radius: 6px;
+      padding: 0.5rem 0.7rem;
+      font-size: 1rem;
+      margin-bottom: 0.88rem;
+      width: 100%;
+      box-sizing: border-box;
+      outline: none;
+      transition: border 0.14s;
+    }
+    .sidebar input:focus,
+    .sidebar select:focus {
+      border: 1.5px solid var(--primary-accent);
+    }
+    .sidebar button {
+      background: var(--primary-accent);
+      border: none;
+      color: #fff;
+      font-weight: 600;
+      font-size: 1rem;
+      border-radius: 6px;
+      padding: 0.6rem 0;
+      cursor: pointer;
+      transition: filter 0.13s;
+      width: 100%;
+      box-shadow: 0 2px 6px #0002;
+    }
+    .sidebar button:hover {
+      filter: brightness(1.13);
+    }
+    .sidebar .reset {
+      background: #23272a;
+      color: var(--primary-accent);
+      border: 1px solid #444;
+      margin-top: -0.4rem;
+    }
+    .listings-section {
+      flex: 1;
+      min-width: 340px;
+      background: none;
+      padding: 0;
+    }
+    .search-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+      background: var(--foreground);
+      padding: 1.0rem 1.25rem;
+      border-radius: 10px;
+      margin-bottom: 2rem;
+      box-shadow: 0 2px 8px #0002;
+    }
+    .search-bar input[type='search'] {
+      flex: 1;
+      background: #222326;
+      color: var(--highlight);
+      border: none;
+      border-radius: 6px;
+      font-size: 1.1rem;
+      padding: 0.65rem 0.9rem;
+      margin-right: 0.65rem;
+      outline: none;
+      font-family: inherit;
+    }
+    .search-bar button {
+      background: var(--primary-accent);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: 600;
+      padding: 0.63rem 1.2rem;
+      cursor: pointer;
+      margin-left: 0.38rem;
+      box-shadow: 0 1px 4px #0002;
+      transition: filter 0.15s;
+    }
+    .search-bar button:hover {
+      filter: brightness(1.16);
+    }
+    .listing-grid {
+      display: grid;
+      gap: 1.5rem;
+      grid-template-columns: repeat(auto-fit, minmax(288px, 1fr));
+      min-height: 280px;
+    }
+    .empty-msg {
+      color: #fff;
+      font-size: 1.1rem;
+      text-align: center;
+      grid-column: 1 / -1;
+      padding: 2rem 0;
+      opacity: 0.8;
+    }
+    .listing-card {
+      background: var(--foreground);
+      border-radius: 16px;
+      box-shadow: 0 4px 16px #0003;
+      display: flex;
+      flex-direction: column;
+      padding: 1.2rem;
+      transition: box-shadow 0.13s, transform 0.13s;
+      cursor: pointer;
+    }
+    .listing-card:hover {
+      box-shadow: 0 8px 32px #0004;
+      transform: translateY(-2px) scale(1.025);
+    }
+    .listing-img {
+      width: 100%;
+      height: 178px;
+      object-fit: cover;
+      background: #191b1e;
+      border-radius: 9px;
+      margin-bottom: 1rem;
+      border: 1px solid #2f3136;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .listing-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 8px;
+      display: block;
+    }
+    .listing-title {
+      color: var(--highlight);
+      font-size: 1.22rem;
+      font-weight: 600;
+      margin: 0 0 0.2rem;
+      letter-spacing: 0.4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .listing-location {
+      font-size: 0.96rem;
+      color: var(--secondary-accent);
+      margin-bottom: 0.18rem;
+    }
+    .listing-rating {
+      display: inline-flex;
+      align-items: center;
+      color: var(--star);
+      font-size: 1.07rem;
+      font-weight: 600;
+      letter-spacing: -0.2px;
+      margin-right: 0.39rem;
+      margin-top: 0.2rem;
+      margin-bottom: 0.2rem;
+    }
+    .listing-rating svg {
+      margin-left: 0.18rem;
+      margin-right: 0.18rem;
+      vertical-align: middle;
+    }
+    .owner-name {
+      margin-left: 0.29rem;
+      color: var(--secondary-accent);
+      font-size: 0.98rem;
+    }
+    .listing-price {
+      color: var(--primary-accent);
+      font-size: 1.14rem;
+      font-weight: 700;
+      margin: 0.45rem 0 0.5rem 0;
+    }
+    .qr-code-badge {
+      display: flex;
+      align-items: center;
+      margin-top: 0.16rem;
+      gap: 0.45rem;
+      font-size: 0.98rem;
+      color: var(--highlight);
+      background: #303238;
+      border-radius: 5px;
+      padding: 0.16rem 0.6rem 0.16rem 0.5rem;
+      width: fit-content;
+      box-shadow: 0 1px 6px #0001;
+    }
+    .qr-code-badge img {
+      height: 1.6em;
+      width: 1.6em;
+      object-fit: contain;
+      border-radius: 2px;
+      background: #fff;
+    }
+    .more-msg {
+      color:var(--highlight);
+      text-align:center;
+      margin-top:2.8rem;
+      font-weight:600;
+      opacity: 0.64;
+      font-size: 0.99rem;
+    }
+    @media (max-width: 980px) {
+      main {
+        flex-direction: column;
+        gap: 1.2rem;
       }
-    </style>
-  </head>
-  <body>
-    <div id="message">
-      <h2>Welcome</h2>
-      <h1>Firebase Hosting Setup Complete</h1>
-      <p>You're seeing this because you've successfully setup Firebase Hosting. Now it's time to go build something extraordinary!</p>
-      <a target="_blank" href="https://firebase.google.com/docs/hosting/">Open Hosting Documentation</a>
+      .sidebar {
+        width: 100%;
+        min-width: initial;
+        min-height: initial;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 1.1rem;
+        padding: 1rem;
+        justify-content: center;
+        align-items: flex-end;
+      }
+      .sidebar > * {
+        flex: 1 1 160px;
+      }
+    }
+    @media (max-width: 710px) {
+      header {
+        flex-direction: column;
+        gap: 1.5rem 0;
+        align-items: flex-start;
+        padding: 1rem 1rem;
+      }
+      main {
+        padding: 0 0.3rem;
+      }
+      .sidebar {
+        padding: 0.75rem 0.5rem;
+      }
+      .listing-card {
+        padding: 0.88rem;
+      }
+    }
+    footer {
+      width: 100%;
+      background: var(--header-dark);
+      color: var(--secondary-accent);
+      text-align: center;
+      padding: 2rem 0;
+      margin-top: 2.2rem;
+      font-size: 1rem;
+    }
+    footer a {
+      color: var(--primary-accent);
+      text-decoration: none;
+      margin: 0 0.7rem;
+    }
+    footer span {
+      color: var(--highlight);
+    }
+  </style>
+  <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="logo">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=38x38&data=QRaus" alt="QRaus logo" style="height: 38px; width: 38px; border-radius: 6px; background: #fff;"/>
+      QRaus
     </div>
-    <p id="load">Firebase SDK Loading&hellip;</p>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="list.html">List an Item</a>
+      <a href="mycalendars.html">My Calendars</a>
+      <a href="about.html">About</a>
+      <a href="help.html">Help</a>
+    </nav>
+    <div class="auth-buttons">
+      <button onclick="location.href='login.html'">Sign In</button>
+      <button class="signup" onclick="location.href='signup.html'">Sign Up</button>
+    </div>
+  </header>
 
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        const loadEl = document.querySelector('#load');
-        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
-        // // The Firebase SDK is initialized and available here!
-        //
-        // firebase.auth().onAuthStateChanged(user => { });
-        // firebase.database().ref('/path/to/ref').on('value', snapshot => { });
-        // firebase.firestore().doc('/foo/bar').get().then(() => { });
-        // firebase.functions().httpsCallable('yourFunction')().then(() => { });
-        // firebase.messaging().requestPermission().then(() => { });
-        // firebase.storage().ref('/path/to/ref').getDownloadURL().then(() => { });
-        // firebase.analytics(); // call to activate
-        // firebase.analytics().logEvent('tutorial_completed');
-        // firebase.performance(); // call to activate
-        //
-        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
+  <main>
+    <!-- Sidebar (Filter/Search) -->
+    <aside class="sidebar">
+      <h2>Filter by:</h2>
+      <label for="location">Location</label>
+      <select id="location">
+        <option>All Perth</option>
+        <option>Perth CBD</option>
+        <option>Fremantle</option>
+        <option>Joondalup</option>
+        <option>Mandurah</option>
+        <option>Rockingham</option>
+      </select>
+      <label for="category">Category</label>
+      <select id="category">
+        <option>All</option>
+        <option>Electric Scooters</option>
+        <option>Bikes</option>
+        <option>Camping Gear</option>
+        <option>Tools</option>
+        <option>Electronics</option>
+        <option>Other</option>
+      </select>
+      <label for="price-range">Max Price (per day)</label>
+      <input type="number" id="price-range" min="1" max="999" placeholder="$">
+      <button onclick="window.location.href='index.html'">Apply Filters</button>
+      <button class="reset" onclick="window.location.href='index.html'">Reset</button>
+    </aside>
 
-        try {
-          let app = firebase.app();
-          let features = [
-            'auth', 
-            'database', 
-            'firestore',
-            'functions',
-            'messaging', 
-            'storage', 
-            'analytics', 
-            'remoteConfig',
-            'performance',
-          ].filter(feature => typeof app[feature] === 'function');
-          loadEl.textContent = `Firebase SDK loaded with ${features.join(', ')}`;
-        } catch (e) {
-          console.error(e);
-          loadEl.textContent = 'Error loading the Firebase SDK, check the console.';
+    <section class="listings-section">
+      <form class="search-bar" onsubmit="window.location.href='index.html'; return false;">
+        <input type="search" placeholder="Search for scooters, bikes, tools…">
+        <button type="submit">🔍 Search</button>
+      </form>
+      <div class="listing-grid" id="listingGrid">
+        <div class="empty-msg" id="emptyMsg">
+          No listings found. Be the first to add a rental!
+        </div>
+      </div>
+      <div class="more-msg" id="moreMsg"></div>
+    </section>
+  </main>
+
+  <footer>
+    <div>
+      &copy; 2025 QRaus · Made for Perth
+      <span>|</span>
+      <a href="contact.html">Contact</a>
+      <span>·</span>
+      <a href="https://github.com/">View on GitHub</a>
+    </div>
+    <div>
+      Designed for both 📱 mobile &amp; 💻 desktop — QR-powered local rentals with style!
+    </div>
+  </footer>
+
+  <script>
+    // ----- FIREBASE CONFIGURATION -----
+    // TODO: replace the config below with your own from Firebase Console!
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_AUTH_DOMAIN",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_STORAGE_BUCKET",
+      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // Reference to grid & empty message
+    const grid = document.getElementById('listingGrid');
+    const emptyMsg = document.getElementById('emptyMsg');
+    const moreMsg = document.getElementById('moreMsg');
+
+    // LIVE real-time listener for "listings" collection
+    db.collection("listings").orderBy("createdAt", "desc")
+      .onSnapshot(snapshot => {
+        // Remove previous cards
+        while (grid.firstChild) grid.removeChild(grid.firstChild);
+
+        if (snapshot.empty) {
+          emptyMsg.style.display = "block";
+          moreMsg.textContent = "";
+        } else {
+          emptyMsg.style.display = "none";
+          snapshot.forEach(doc => {
+            const data = doc.data();
+            // Create listing card
+            const card = document.createElement('div');
+            card.className = "listing-card";
+            card.innerHTML = `
+              <div class="listing-img">
+                ${data.image ? `<img src="${data.image}" alt="${(data.title||"photo")}" />` : `<span style="color:#7289da">No Image</span>`}
+              </div>
+              <div class="listing-title">${(data.title || "No Title")}</div>
+              <div class="listing-location">${(data.location || "")}</div>
+              <div class="listing-rating">
+                <span>${typeof data.rating === "number" ? data.rating.toFixed(1) : "New"}</span>
+                <svg fill="#feca1b" height="18" width="18" viewBox="0 0 20 20">
+                  <polygon points="10 1.6 12.472 7.441 18.806 7.763 13.902 11.885 15.323 18.174 10 14.684 4.677 18.174 6.098 11.885 1.195 7.763 7.528 7.441 10 1.6"/>
+                </svg>
+                <span class="owner-name">${(data.ownerName || "")}</span>
+              </div>
+              <div class="listing-price">$${(data.price||"?.??")} / day</div>
+              <div class="qr-code-badge">
+                ${data.qrUrl ? `<img src="${data.qrUrl}" alt="QR Code" />` : ""}
+                QR Code
+              </div>
+            `;
+            grid.appendChild(card);
+          });
+          moreMsg.textContent = "… More rentals coming as people list items!";
         }
       });
-    </script>
-  </body>
+  </script>
+</body>
 </html>
